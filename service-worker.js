@@ -1,5 +1,5 @@
 // Service Worker for Dream Home Designer PWA
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `dream-home-${CACHE_VERSION}`;
 
 // List of files to cache
