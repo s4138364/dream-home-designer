@@ -1055,7 +1055,7 @@ function setCameraView(viewType) {
     
     if (viewType === 'front') {
         // Front view - standing in front of room
-        targetPosition = { x: 0, y: 8, z: 15 };
+        targetPosition = { x: 0, y: 8, z: 16 };  // Increased z from 15 to 16
         targetLookAt = { x: 0, y: 2, z: 0 };
         
     } else if (viewType === 'top') {
@@ -1066,12 +1066,17 @@ function setCameraView(viewType) {
     } else if (viewType === 'corner') {
         // Corner view (isometric style)
         targetPosition = { x: 12, y: 10, z: 12 };
+        targetLookAt = { x: 0, y: 2, z: 0 }
         
     } else if (viewType === 'walk') {
         // Walk-through view (eye level)
         targetPosition = { x: 0, y: 5, z: 8 };
         targetLookAt = { x: 0, y: 3, z: -5 }; // Look toward back wall
     }
+
+     // Reset zoom level to medium when changing views
+    currentZoomLevel = 2;
+    targetZoomLevel = 2;
     
     // Smooth camera transition
     const duration = 1000; // 1 second
@@ -1099,7 +1104,7 @@ function setCameraView(viewType) {
     }
     
     animateCamera();
-    console.log('📷 Camera moved to:', viewType);
+    console.log('📷 Camera moved to:', viewType, 'Position:', targetPosition);
 }
 
 // Simple orbit controls (drag to rotate) - MOBILE & DESKTOP
@@ -1278,35 +1283,31 @@ function add3DKeyboardControls() {
     console.log('⌨️ Keyboard controls enabled for 3D viewer');
 }
 
-// Helper function to rotate camera (IMPROVED FOR MOBILE)
+// Helper function to rotate camera (IMPROVED - no drift)
 function rotateCamera(deltaX, deltaY) {
-    const rotationSpeed = 0.003; // Reduced sensitivity
+    const rotationSpeed = 0.003;
     
-    // Get current position relative to center
-    const centerX = 0;
-    const centerZ = 0;
-    
-    // Calculate current angle and radius
-    const angleY = Math.atan2(camera.position.x - centerX, camera.position.z - centerZ);
-    const radiusXZ = Math.sqrt(
-        Math.pow(camera.position.x - centerX, 2) + 
-        Math.pow(camera.position.z - centerZ, 2)
+    // Calculate current spherical coordinates
+    const radius = Math.sqrt(
+        camera.position.x ** 2 + 
+        camera.position.z ** 2
     );
     
-    // Rotate horizontally around Y axis
-    const newAngleY = angleY - deltaX * rotationSpeed;
+    // Get angle around Y axis
+    let angleY = Math.atan2(camera.position.x, camera.position.z);
     
-    // Update X and Z position (orbit around center)
-    camera.position.x = centerX + radiusXZ * Math.sin(newAngleY);
-    camera.position.z = centerZ + radiusXZ * Math.cos(newAngleY);
+    // Apply rotation
+    angleY -= deltaX * rotationSpeed;
+    
+    // Update position maintaining radius (prevents drift)
+    camera.position.x = radius * Math.sin(angleY);
+    camera.position.z = radius * Math.cos(angleY);
     
     // Vertical movement (up/down)
     camera.position.y -= deltaY * rotationSpeed * 10;
-    
-    // Limit vertical position
     camera.position.y = Math.max(3, Math.min(camera.position.y, 15));
     
-    // Always look at center of room
+    // Always look at center
     camera.lookAt(0, 2, 0);
 }
 
@@ -1410,6 +1411,7 @@ function create3DRoom() {
     }
     
     room3D = new THREE.Group();
+    room3D.position.set(0, 0, 0); // ENSURE ROOM IS AT CENTER
     
     // Get wall color from current design
     const wallColor = new THREE.Color(currentDesign.wallColor || '#f5f5f5');
@@ -1595,6 +1597,10 @@ view3DBtn.addEventListener('click', function() {
     // RESET CAMERA POSITION (ensures proper view on mobile)
     camera.position.set(0, 8, 15);
     camera.lookAt(0, 2, 0);
+
+    // Reset zoom level
+    currentZoomLevel = 2;
+    targetZoomLevel = 2;
     
     // Show 3D viewer
     threejsContainer.style.display = 'block';
@@ -1620,6 +1626,7 @@ view3DBtn.addEventListener('click', function() {
     announceToScreenReader('3D viewer opened. Use arrow keys to rotate view, plus and minus keys to zoom.')
     
     console.log('🎮 3D Viewer opened!');
+    console.log('📷 Camera position:', camera.position);
 });
 
 close3DBtn.addEventListener('click', function() {
@@ -1800,6 +1807,9 @@ function showUpdateNotification() {
     const notification = document.getElementById('updateNotification');
     if (notification) {
         notification.style.display = 'flex';
+        console.log('📢 Showing update notification');
+    } else {
+        console.error('❌ Update notification element not found');
     }
 }
 
