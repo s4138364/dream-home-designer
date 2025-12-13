@@ -1734,3 +1734,27 @@ function showInstallButton() {
         }
     }
 }
+
+// ===== LOADING SCREEN =====
+
+// Hide loading screen when everything is ready
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    
+    // Wait a moment for everything to settle, then fade out
+    setTimeout(() => {
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            console.log('✨ App fully loaded!');
+        }
+    }, 500); // 500ms delay for smooth experience
+});
+
+// Also hide if taking too long (fallback)
+setTimeout(() => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+        loadingScreen.classList.add('hidden');
+        console.log('⏰ Loading screen timeout - forcing hide');
+    }
+}, 5000); // 5 seconds maximum
