@@ -943,16 +943,21 @@ function init3DScene() {
 
     // Create camera
     camera = new THREE.PerspectiveCamera( 
-        75,                                             // Field of view
-        800 / 600, // Aspect ratio
+        50,                                             // Field of view
+        containerWidth / containerHeight,
         0.1,                                            // Near clipping
         1000                                            // Far clipping
     );
-    camera.position.set(0, 8, 15);  // Further back and higher
+
+    camera.position.set(0, 8, 12);  // Further back and higher
     camera.lookAt(0, 2, 0);         // Look at room center
 
     // Creat renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true 
+    });
+    
     const width = 800;
     const height = 600;
     renderer.setSize(width, height);
@@ -1410,7 +1415,7 @@ function create3DRoom() {
         scene.remove(room3D);
     }
     
-    room3D = new THREE.Group();
+    const room3D = new THREE.Group();
     room3D.position.set(0, 0, 0); // ENSURE ROOM IS AT CENTER
     
     // Get wall color from current design
