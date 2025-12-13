@@ -4,11 +4,11 @@ const CACHE_NAME = `dream-home-${CACHE_VERSION}`;
 
 // List of files to cache
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/manifest.json',
+  '/dream-home-designer/',              // Root
+  '/dream-home-designer/index.html',
+  '/dream-home-designer/style.css',
+  '/dream-home-designer/script.js',
+  '/dream-home-designer/manifest.json',
   'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
 ];

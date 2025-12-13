@@ -1585,7 +1585,7 @@ console.log('✨ 3D Visualization module loaded!');
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker
-            .register('/service-worker.js')
+            .register('/dream-home-designer/service-worker.js')
             .then((registration) => {
                 console.log('✅ Service Worker registered successfully!');
                 console.log('Scope:', registration.scope);
