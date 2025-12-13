@@ -249,54 +249,91 @@ function loadSavedQuizData() {
 // Check if user has taken quiz before
 const hasCompletedQuiz = loadSavedQuizData();
 
-// Get all the elements we need
-const quizSection = document.getElementById('quizSection');
-const takeQuizBtn = document.querySelectorAll('.button-card button')[1]; // Second button
-const closeQuizBtn = document.getElementById('closeQuiz');
-const optionButtons = document.querySelectorAll('.option-btn');
-const restartQuizBtn = document.getElementById('restartQuiz');
-const startDesigningBtn = document.getElementById('startDesigning');
+// Initialize quiz UI when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Get all the elements we need
+    const quizSection = document.getElementById('quizSection');
+    const takeQuizBtn = document.querySelectorAll('.button-card button')[1]; // Second button
+    const closeQuizBtn = document.getElementById('closeQuiz');
+    const optionButtons = document.querySelectorAll('.option-btn');
+    const restartQuizBtn = document.getElementById('restartQuiz');
+    const startDesigningBtn = document.getElementById('startDesigning');
 
-// Show quiz when "Take Quiz" button is clicked
-takeQuizBtn.addEventListener('click', function() {
-    quizSection.style.display = 'flex';
-    resetQuiz();
-});
+    // Only set up event listeners if elements exist
+    if (!quizSection || !takeQuizBtn) {
+        console.warn('Quiz elements not found in DOM');
+        return;
+    }
 
-// Close quiz when X button is clicked
-closeQuizBtn.addEventListener('click', function() {
-    quizSection.style.display = 'none';
-});
-
-// Handle option button clicks
-optionButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const answer = this.getAttribute('data-answer');
-        
-        // Store the answer
-        if (currentQuestion === 1) {
-            quizAnswers.style = answer;
-        } else if (currentQuestion === 2) {
-            quizAnswers.bedrooms = answer;
-        } else if (currentQuestion === 3) {
-            quizAnswers.priority = answer;
-        } else if (currentQuestion === 4) {
-            quizAnswers.colors = answer;
-        }
-        
-        console.log('Current quiz answers;', quizAnswers);
-        console.log('Just answerd question', currentQuestion, 'with:', answer);
-        
-        // Move to next question or show results
-        if (currentQuestion < 4) {
-            goToNextQuestion();
-        } else {
-            showResults();
-        }
+    // Show quiz when "Take Quiz" button is clicked
+    takeQuizBtn.addEventListener('click', function() {
+        quizSection.style.display = 'flex';
+        resetQuiz();
     });
-});
 
-// Go to next question
+    // Close quiz when X button is clicked
+    if (closeQuizBtn) {
+        closeQuizBtn.addEventListener('click', function() {
+            quizSection.style.display = 'none';
+        });
+    }
+
+    // Handle option button clicks
+    optionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const answer = this.getAttribute('data-answer');
+            
+            // Store the answer
+            if (currentQuestion === 1) {
+                quizAnswers.style = answer;
+            } else if (currentQuestion === 2) {
+                quizAnswers.bedrooms = answer;
+            } else if (currentQuestion === 3) {
+                quizAnswers.priority = answer;
+            } else if (currentQuestion === 4) {
+                quizAnswers.colors = answer;
+            }
+            
+            console.log('Current quiz answers;', quizAnswers);
+            console.log('Just answerd question', currentQuestion, 'with:', answer);
+            
+            // Move to next question or show results
+            if (currentQuestion < 4) {
+                goToNextQuestion();
+            } else {
+                showResults();
+            }
+        });
+    });
+
+    // Restart quiz
+    if (restartQuizBtn) {
+        restartQuizBtn.addEventListener('click', function() {
+            resetQuiz();
+        });
+    }
+
+    // Start designing button
+    if (startDesigningBtn) {
+        startDesigningBtn.addEventListener('click', function() {
+            showToast('Scrolling to design canvas...', 'info');
+            quizSection.style.display = 'none';
+        });
+    }
+
+    // Show welcome back message if user has completed quiz
+    if (hasCompletedQuiz) {
+        const returningUserSection = document.getElementById('returningUser');
+        const returningUserStyle = document.getElementById('returningUserStyle');
+        
+        if (returningUserSection && returningUserStyle) {
+            returningUserSection.style.display = 'block';
+            returningUserStyle.textContent = quizAnswers.style || 'modern';
+        }
+    }
+
+    console.log('✅ Quiz UI initialized!');
+});
 function goToNextQuestion() {
     // Hide current question
     document.getElementById('question' + currentQuestion).classList.remove('active');
@@ -373,11 +410,6 @@ function generateResultMessage() {
     return `✨ Perfect Match Found! ✨\n\nWe recommend a ${style} home with ${bedrooms}, while ${priority}, all ${colors}. This personalized design will transform your vision into reality and create the dream home you've always wanted!`;
 }
 
-// Restart quiz
-restartQuizBtn.addEventListener('click', function() {
-    resetQuiz();
-});
-
 // Reset quiz to beginning
 function resetQuiz() {
     currentQuestion = 1;
@@ -395,24 +427,9 @@ function resetQuiz() {
     document.getElementById('question1').classList.add('active');
 }
 
-// Start designing button (placeholder for now)
-startDesigningBtn.addEventListener('click', function() {
-    showToast('Scrolling to design canvas...', 'info');
-    quizSection.style.display = 'none';
-});
-
 // Log to console when page loads
 console.log('Dream Home Designer App Loaded! 🏠');
 console.log('Click "Take Quiz" to test the interactive quiz system');
-
-// Show welcome back message if user has completed quiz
-if (hasCompletedQuiz) {
-    const returningUserSection = document.getElementById('returningUser');
-    if (returningUserSection) {
-        returningUserSection.style.display = 'block';
-        document.getElementById('returningUserStyle').textContent = quizAnswers.style || 'modern';
-    }
-}
 
 // ===== ROOM DESIGN CANVAS =====
 
@@ -430,16 +447,194 @@ if (savedDesign) {
     currentDesign = JSON.parse(savedDesign);
 }
 
-// Get all control elements
-const roomTypeButtons = document.querySelectorAll('.room-btn');
-const wallColorInput = document.getElementById('wallColor');
-const floorTypeSelect = document.getElementById('floorType');
-const saveDesignBtn = document.getElementById('saveDesign');
-const resetDesignBtn = document.getElementById('resetDesign');
+// Initialize room design controls when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Get all control elements
+    const roomTypeButtons = document.querySelectorAll('.room-btn');
+    const wallColorInput = document.getElementById('wallColor');
+    const floorTypeSelect = document.getElementById('floorType');
+    const saveDesignBtn = document.getElementById('saveDesign');
+    const resetDesignBtn = document.getElementById('resetDesign');
+    const roomSizeSlider = document.getElementById('roomSize');
+    const roomSizeLabel = document.getElementById('roomSizeValue');
+    const roomCanvas = document.getElementById('roomCanvas');
+    const downloadDesignBtn = document.getElementById('downloadDesign');
+    const paletteButtons = document.querySelectorAll('.palette-btn');
+
+    // Room type selection
+    roomTypeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentDesign.roomType = this.getAttribute('data-room');
+            
+            // Visual feedback
+            roomTypeButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            applyDesign();
+
+            // UPDATE 3D VIEW IF IT'S OPEN
+            if (isViewer3DActive) {
+                create3DRoom();
+                console.log('🎨 3D room type updated to:', currentDesign.roomType);
+            }
+        });
+    });
+
+    // Wall color change
+    if (wallColorInput) {
+        wallColorInput.addEventListener('input', function() {
+            currentDesign.wallColor = this.value;
+            applyDesign();
+
+            if (isViewer3DActive) {
+                create3DRoom();
+                console.log('🎨 3D walls updated to:', this.value);
+            }
+        });
+    }
+
+    if (floorTypeSelect) {
+        floorTypeSelect.addEventListener('change', function() {
+            currentDesign.floorType = this.value;
+            applyDesign();
+
+            if (isViewer3DActive) {
+                create3DRoom();
+                console.log('🏠 3D floor updated to:', this.value);
+            }
+        });
+    }
+
+    // Room size control
+    if (roomSizeSlider && roomSizeLabel && roomCanvas) {
+        roomSizeSlider.addEventListener('input', function() {
+            const size = parseInt(this.value);
+            currentDesign.roomSize = size;
+            
+            // Update canvas height
+            roomCanvas.style.height = size + 'px';
+            
+            // Update label
+            if (size <= 400) {
+                roomSizeLabel.textContent = 'Small';
+            } else if (size <= 550) {
+                roomSizeLabel.textContent = 'Medium';
+            } else {
+                roomSizeLabel.textContent = 'Large';
+            }
+            
+            console.log('Room size changed to:', size);
+        });
+    }
+
+    // Color Palette functionality
+    paletteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Get wall and floor values from button
+            const wallColor = this.getAttribute('data-wall');
+            const floorType = this.getAttribute('data-floor');
+            
+            // Update current design
+            currentDesign.wallColor = wallColor;
+            currentDesign.floorType = floorType;
+            
+            // Apply the design
+            if (wallColorInput) wallColorInput.value = wallColor;
+            if (floorTypeSelect) floorTypeSelect.value = floorType;
+            applyDesign();
+            
+            // UPDATE 3D VIEW IF IT'S OPEN
+            if (isViewer3DActive) {
+                create3DRoom();
+                console.log('🎨 3D view updated with palette');
+            }
+            
+            // Visual feedback - highlight selected palette
+            paletteButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            console.log('Applied palette:', wallColor, floorType);
+        });
+    });
+
+    // Save design
+    if (saveDesignBtn) {
+        saveDesignBtn.addEventListener('click', function() {
+            localStorage.setItem('dreamHomeDesign', JSON.stringify(currentDesign));
+            showToast('Design saved successfully!', 'success');
+            announceToScreenReader('Design saved successfully.')
+            console.log('Design saved:', currentDesign);
+        });
+    }
+
+    // Reset design
+    if (resetDesignBtn) {
+        resetDesignBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset your design?')) {
+                currentDesign = {
+                    roomType: 'living',
+                    wallColor: '#f5f5f5',
+                    floorType: 'wood',
+                    roomSize: 500
+                };
+                applyDesign();
+                localStorage.removeItem('dreamHomeDesign');
+                showToast('Design reset to default', 'info');
+            }
+        });
+    }
+
+    // Download design as image
+    if (downloadDesignBtn) {
+        downloadDesignBtn.addEventListener('click', function() {
+            const canvas = document.getElementById('roomCanvas');
+            
+            // Show loading message
+            downloadDesignBtn.textContent = '⏳ Generating...';
+            downloadDesignBtn.disabled = true;
+            
+            // Use html2canvas to capture the room
+            html2canvas(canvas, {
+                backgroundColor: '#e0e0e0',
+                scale: 2, // Higher quality
+                logging: false
+            }).then(function(canvas) {
+                // Convert to image and download
+                const link = document.createElement('a');
+                link.download = 'my-dream-home-design.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Reset button
+                downloadDesignBtn.textContent = '📸 Download as Image';
+                downloadDesignBtn.disabled = false;
+                
+                console.log('✅ Design downloaded as image!');
+            }).catch(function(error) {
+                console.error('Download failed:', error);
+                alert('Failed to download. Please try again.');
+                downloadDesignBtn.textContent = '📸 Download as Image';
+                downloadDesignBtn.disabled = false;
+            });
+        });
+    }
+
+    // Initialize furniture dragging on page load
+    enableFurnitureDragging();
+    loadFurniturePositions();
+    
+    console.log('✅ Room design controls initialized!');
+});
 
 // Apply design to canvas
 function applyDesign() {
     const canvas = document.getElementById('roomCanvas');
+    
+    // Safety check - don't run if canvas doesn't exist yet
+    if (!canvas) {
+        console.warn('Canvas not ready yet, skipping applyDesign');
+        return;
+    }
     
     // Update room type display (show/hide furniture sets)
     document.querySelectorAll('.furniture-set').forEach(set => {
@@ -481,162 +676,6 @@ function applyDesign() {
     
     console.log('Design applied:', currentDesign);
 }
-
-// Room type selection
-roomTypeButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        currentDesign.roomType = this.getAttribute('data-room');
-        
-        // Visual feedback
-        roomTypeButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        
-        applyDesign();
-
-        // UPDATE 3D VIEW IF IT'S OPEN
-        if (isViewer3DActive) {
-            create3DRoom();
-            console.log('🎨 3D room type updated to:', currentDesign.roomType);
-        }
-    });
-});
-
-// Wall color change
-wallColorInput.addEventListener('input', function() {
-    currentDesign.wallColor = this.value;
-    applyDesign();
-
-    if (isViewer3DActive) {
-        create3DRoom();
-        console.log('🎨 3D walls updated to:', this.value);
-    }
-});
-
-floorTypeSelect.addEventListener('change', function() {
-    currentDesign.floorType = this.value;
-    applyDesign();
-
-    if (isViewer3DActive) {
-        create3DRoom();
-        console.log('🏠 3D floor updated to:', this.value);
-    }
-});
-
-// Room size control
-const roomSizeSlider = document.getElementById('roomSize');
-const roomSizeLabel = document.getElementById('roomSizeValue');
-const roomCanvas = document.getElementById('roomCanvas');
-
-roomSizeSlider.addEventListener('input', function() {
-    const size = parseInt(this.value);
-    currentDesign.roomSize = size;
-    
-    // Update canvas height
-    roomCanvas.style.height = size + 'px';
-    
-    // Update label
-    if (size <= 400) {
-        roomSizeLabel.textContent = 'Small';
-    } else if (size <= 550) {
-        roomSizeLabel.textContent = 'Medium';
-    } else {
-        roomSizeLabel.textContent = 'Large';
-    }
-    
-    console.log('Room size changed to:', size);
-});
-
-// Color Palette functionality
-const paletteButtons = document.querySelectorAll('.palette-btn');
-
-paletteButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        // Get wall and floor values from button
-        const wallColor = this.getAttribute('data-wall');
-        const floorType = this.getAttribute('data-floor');
-        
-        // Update current design
-        currentDesign.wallColor = wallColor;
-        currentDesign.floorType = floorType;
-        
-        // Apply the design
-        wallColorInput.value = wallColor;
-        floorTypeSelect.value = floorType;
-        applyDesign();
-        
-        // UPDATE 3D VIEW IF IT'S OPEN
-        if (isViewer3DActive) {
-            create3DRoom();
-            console.log('🎨 3D view updated with palette');
-        }
-        
-        // Visual feedback - highlight selected palette
-        paletteButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        
-        console.log('Applied palette:', wallColor, floorType);
-    });
-});
-
-// Save design
-saveDesignBtn.addEventListener('click', function() {
-    localStorage.setItem('dreamHomeDesign', JSON.stringify(currentDesign));
-    showToast('Design saved successfully!', 'success');
-
-    announceToScreenReader('Design saved successfully.')
-
-    console.log('Design saved:', currentDesign);
-});
-
-// Reset design
-resetDesignBtn.addEventListener('click', function() {
-    if (confirm('Are you sure you want to reset your design?')) {
-        currentDesign = {
-            roomType: 'living',
-            wallColor: '#f5f5f5',
-            floorType: 'wood',
-            roomSize: 500
-        };
-        applyDesign();
-        localStorage.removeItem('dreamHomeDesign');
-        showToast('Design reset to default', 'info');
-    }
-});
-
-// Download design as image
-const downloadDesignBtn = document.getElementById('downloadDesign');
-
-downloadDesignBtn.addEventListener('click', function() {
-    const canvas = document.getElementById('roomCanvas');
-    
-    // Show loading message
-    downloadDesignBtn.textContent = '⏳ Generating...';
-    downloadDesignBtn.disabled = true;
-    
-    // Use html2canvas to capture the room
-    html2canvas(canvas, {
-        backgroundColor: '#e0e0e0',
-        scale: 2, // Higher quality
-        logging: false
-    }).then(function(canvas) {
-        // Convert to image and download
-        const link = document.createElement('a');
-        link.download = 'my-dream-home-design.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        // Reset button
-        downloadDesignBtn.textContent = '📸 Download as Image';
-        downloadDesignBtn.disabled = false;
-        
-        console.log('✅ Design downloaded as image!');
-    }).catch(function(error) {
-        console.error('Download failed:', error);
-        alert('Failed to download. Please try again.');
-        downloadDesignBtn.textContent = '📸 Download as Image';
-        downloadDesignBtn.disabled = false;
-    });
-});
 
 // ===== FURNITURE DRAGGING FUNCTIONALITY (IMPROVED WITH TOUCH) =====
 
@@ -799,62 +838,65 @@ function loadFurniturePositions() {
     console.log(`Furniture positions loaded for ${roomType}!`);
 }
 
-// Initialize dragging on page load
-enableFurnitureDragging();
-loadFurniturePositions();
-
 // ===== SMART AI DESIGN SUGGESTIONS =====
 
-const getAISuggestionBtn = document.getElementById('getAISuggestion');
-const aiSuggestionsBox = document.getElementById('aiSuggestionsBox');
-const aiSuggestionText = document.getElementById('aiSuggestionText');
+document.addEventListener('DOMContentLoaded', () => {
+    const getAISuggestionBtn = document.getElementById('getAISuggestion');
+    const aiSuggestionsBox = document.getElementById('aiSuggestionsBox');
+    const aiSuggestionText = document.getElementById('aiSuggestionText');
 
-if (getAISuggestionBtn) {
-    getAISuggestionBtn.addEventListener('click', async function() {
-        // Check if user has completed quiz
-        if (!quizAnswers.style || !quizAnswers.bedrooms) {
-            showToast('Please complete the quiz first!', 'warning');
-            quizSection.style.display = 'flex';
-            resetQuiz();
-            return;
-        }
-        
-        // Show loading state
-        getAISuggestionBtn.textContent = '🤖 AI is thinking...';
-        getAISuggestionBtn.disabled = true;
-        aiSuggestionsBox.style.display = 'block';
-        aiSuggestionText.textContent = 'Analyzing your preferences and generating suggestions...';
-        
-        try {
-            // Generate smart suggestion for current room type
-            const suggestion = await generateRoomSuggestion(currentDesign.roomType, quizAnswers);
+    if (getAISuggestionBtn) {
+        getAISuggestionBtn.addEventListener('click', async function() {
+            // Check if user has completed quiz
+            if (!quizAnswers.style || !quizAnswers.bedrooms) {
+                showToast('Please complete the quiz first!', 'warning');
+                const quizSection = document.getElementById('quizSection');
+                if (quizSection) quizSection.style.display = 'flex';
+                resetQuiz();
+                return;
+            }
             
-            // Display with typing effect (optional - makes it feel more AI-like)
-            aiSuggestionText.textContent = '';
-            let i = 0;
-            const typingInterval = setInterval(() => {
-                if (i < suggestion.length) {
-                    aiSuggestionText.textContent += suggestion.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
+            // Show loading state
+            getAISuggestionBtn.textContent = '🤖 AI is thinking...';
+            getAISuggestionBtn.disabled = true;
+            if (aiSuggestionsBox) aiSuggestionsBox.style.display = 'block';
+            if (aiSuggestionText) aiSuggestionText.textContent = 'Analyzing your preferences and generating suggestions...';
+            
+            try {
+                // Generate smart suggestion for current room type
+                const suggestion = await generateRoomSuggestion(currentDesign.roomType, quizAnswers);
+                
+                // Display with typing effect (optional - makes it feel more AI-like)
+                if (aiSuggestionText) {
+                    aiSuggestionText.textContent = '';
+                    let i = 0;
+                    const typingInterval = setInterval(() => {
+                        if (i < suggestion.length) {
+                            aiSuggestionText.textContent += suggestion.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typingInterval);
+                        }
+                    }, 20); // 20ms per character = smooth typing effect
                 }
-            }, 20); // 20ms per character = smooth typing effect
-            
-            console.log('Smart AI room suggestion:', suggestion);
-            
-        } catch (error) {
-            aiSuggestionText.textContent = 'Oops! Something went wrong. Please try again!';
-            console.error('Error:', error);
-        } finally {
-            // Reset button after a delay
-            setTimeout(() => {
-                getAISuggestionBtn.textContent = '🤖 Get AI Design Suggestions';
-                getAISuggestionBtn.disabled = false;
-            }, 1500);
-        }
-    });
-}
+                
+                console.log('Smart AI room suggestion:', suggestion);
+                
+            } catch (error) {
+                if (aiSuggestionText) aiSuggestionText.textContent = 'Oops! Something went wrong. Please try again!';
+                console.error('Error:', error);
+            } finally {
+                // Reset button after a delay
+                setTimeout(() => {
+                    getAISuggestionBtn.textContent = '🤖 Get AI Design Suggestions';
+                    getAISuggestionBtn.disabled = false;
+                }, 1500);
+            }
+        });
+    }
+    
+    console.log('✅ AI suggestions initialized!');
+});
 
 // ===== THREE.JS 3D VISUALIZATION =====
 
@@ -1837,7 +1879,7 @@ function announceToScreenReader(message) {
     }
 }
 
-// Apply initial design on load
+// Apply initial design on load - wait for DOM
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof applyDesign === 'function') {
         applyDesign();
