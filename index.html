@@ -20,6 +20,9 @@
     <meta name="description" content="Design your dream home with AI-powered suggestions and 3D visualization">
 </head>
 <body>
+    <!-- Skip to Content (Accessibility) -->
+     <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
@@ -32,13 +35,16 @@
 
     <!-- Toast Nofification Container -->
     <div class="toast-container" id="toastContainer"></div>
-    
-    <header>
+
+    <!-- Live Region for Screen Readers -->
+    <div id="liveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <header role="banner">
         <h1>🏠 Dream Home Designer</h1>
         <p>Design your perfect home with AI ✨</p>
     </header>
 
-    <main>
+    <main id="main-content" role="main"> 
         <!-- Update Notification -->
         <div class="update-notification" id="updateNotification" style="display: none;">
             <div class="update-card">
@@ -55,7 +61,7 @@
             <div class="install-card">
                 <h3>📱 Install Dream Home Designer</h3>
                 <p>Add this app to your home screen for quick access and offline use!</p>
-                <button id="installAppBtn" onclick="installApp()">Install App</button>
+                <button id="installAppBtn" onclick="installApp()" aria-label="Install app to home screen">Install App</button>
                 <button id="dismissInstallBtn" onclick="dismissInstall()">Maybe Later</button>
             </div>
         </div>
@@ -113,9 +119,9 @@
             </div>
         </section>
 
-        <section class="quiz-section" id="quizSection" style="display: none;">
+        <section class="quiz-section" role="dialog" aria-labelledby="quizTitle" id="quizSection" style="display: none;">
             <div class="quiz-container">
-                <h2>🏠 Discover Your Design Style</h2>
+                <h2 id="quizTitle">🏠 Discover Your Design Style</h2>
                 <p class="quiz-intro">Answer a few questions to get personalized home design suggestions</p>
 
                 <div class="quiz-content">
@@ -302,10 +308,10 @@
 
             <div class="canvas-info">
                 <p>💡 <strong>Tip:</strong> Change options above to see your room update in real-time!</p>
-                <button id="getAISuggestion">🤖 Get AI Design Suggestions</button>
-                <button id="saveDesign">💾 Save My Design</button>
-                <button id="downloadDesign">📸 Download as Image</button>
-                <button id="resetDesign">🔄 Reset Room</button>
+                <button id="getAISuggestion" aria-label="Get AI design suggestions for this room">🤖 Get AI Design Suggestions</button>
+                <button id="saveDesign" aria-label="Save current design">💾 Save My Design</button>
+                <button id="downloadDesign" aria-label="Download design as image">📸 Download as Image</button>
+                <button id="resetDesign" aria-label="Reset room to default">🔄 Reset Room</button>
 
                 <!-- AI Suggestions Display -->
                 <div id="aiSuggestionsBox" style="display: none;">
@@ -321,8 +327,8 @@
         <p class="section-description">View your design in 3D - drag to rotate, scroll to zoom!</p>
 
         <div class="viewer-controls">
-            <button id="view3DBtn">🏠 View in 3D</button>
-            <button id="close3DBtn" style="display: none;">x Close 3D View</button>
+            <button id="view3DBtn" aria-label="Open 3D room viewer">🏠 View in 3D</button>
+            <button id="close3DBtn" aria-label="Close 3D viewer" style="display: none;">x Close 3D View</button>
 
             <div class="lighting-control" id="lightingControl" style="display: none;">
                 <label>💡 Lighting:</label>
@@ -350,8 +356,8 @@
         </div>
     </section>
 
-    <footer>
-        <p>Built with ❤️ | Week 3 of my coding journey - Now with JavaScript!</p>
+    <footer role="contentinfo">
+        <p>Week 8 of my coding journey - Now with extra polish!</p>
     </footer>
 
     <!-- Three.js Library -->

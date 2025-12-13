@@ -969,6 +969,10 @@ function init3DScene() {
 
     // Add basic mouse controls (orbit)
     addOrbitControls();
+
+    // Add keyboard controls for accessbility
+    add3DKeyboardControls();
+
     console.log('✨ 3D Scene initialized!');
 }
 
@@ -1197,6 +1201,56 @@ function addOrbitControls() {
     
     // Set initial cursor
     canvas.style.cursor = 'grab';
+}
+
+// Keyboard controls for 3D viewer (Accessibility)
+function add3DKeyboardControls() {
+    const canvas = renderer.domElement;
+    
+    // Make canvas focusable
+    canvas.setAttribute('tabindex', '0');
+    canvas.setAttribute('aria-label', '3D room viewer - use arrow keys to rotate, plus/minus to zoom');
+    
+    canvas.addEventListener('keydown', (e) => {
+        const step = 5; // Movement step
+        
+        switch(e.key) {
+            case 'ArrowLeft':
+                e.preventDefault();
+                rotateCamera(-step, 0);
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                rotateCamera(step, 0);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                rotateCamera(0, -step);
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                rotateCamera(0, step);
+                break;
+            case '+':
+            case '=':
+                e.preventDefault();
+                zoomCamera(-1);
+                break;
+            case '-':
+            case '_':
+                e.preventDefault();
+                zoomCamera(1);
+                break;
+            case 'Home':
+                e.preventDefault();
+                // Reset to front view
+                camera.position.set(0, 8, 15);
+                camera.lookAt(0, 2, 0);
+                break;
+        }
+    });
+    
+    console.log('⌨️ Keyboard controls enabled for 3D viewer');
 }
 
 // Helper function to rotate camera (IMPROVED FOR MOBILE)
@@ -1796,3 +1850,15 @@ setTimeout(() => {
         console.log('⏰ Loading screen timeout - forcing hide');
     }
 }, 5000); // 5 seconds maximum
+
+// Announce to screen readers
+function announceToScreenReader(message) {
+    const liveRegion = document.getElementById('liveRegion');
+    if (liveRegion) {
+        liveRegion.textContent = message;
+        // Clear after announcement
+        setTimeout(() => {
+            liveRegion.textContent = '';
+        }, 1000);
+    }
+}
