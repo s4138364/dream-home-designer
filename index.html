@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Dream Home Designer</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Mobile viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- App description -->
+    <meta name="description" content="Design your dream home with AI-powered suggestions and 3D visualization">
+</head>
+<body>
+    <header>
+        <h1>🏠 Dream Home Designer</h1>
+        <p>Design your perfect home with AI</p>
+    </header>
+
+    <main>
+        <!-- Update Notification -->
+        <div class="update-notification" id="updateNotification" style="display: none;">
+            <div class="update-card">
+                <div class="update-icon">🎉</div>
+                <h3>New Version Available!</h3>
+                <p>We've added new features and improvements.</p>
+                <div class="update-buttons">
+                    <button id="updateNowBtn" onclick="updateApp()">Update Now</button>
+                    <button id="updateLaterBtn" onclick="dismissUpdate()">Later</button>
+                </div>
+            </div>
+        </div>
+        <div class="install-prompt" id="installPrompt" style="display: none;">
+            <div class="install-card">
+                <h3>📱 Install Dream Home Designer</h3>
+                <p>Add this app to your home screen for quick access and offline use!</p>
+                <button id="installAppBtn" onclick="installApp()">Install App</button>
+                <button id="dismissInstallBtn" onclick="dismissInstall()">Maybe Later</button>
+            </div>
+        </div>
+        
+        <section class="welcome-section">
+            <h2>Welcome!</h2>
+            <p>Let's create your dream home together. Choose how you want to start:</p>
+        </section>
+
+        <section class="returning-user" id="returningUser" style="display: none;">
+            <div class="saved-profile">
+                <h3>👋 Welcome Back!</h3>
+                <p>We saved your design preferences from last time.</p>
+                <div id="savedProfileSummary"></div>
+                <button id="continueDesigning">Continue Designing</button>
+                <button id="retakeQuiz">Update My Preferences</button>
+            </div>
+        </section>
+
+        <section class="action-buttons">
+            <div class="button-card">
+                <h3>🎨 Start Designing</h3>
+                <p>Jump right in and create your home from scratch</p>
+                <button>Start Now</button>
+            </div>
+
+            <div class="button-card">
+                <h3>📋 Take Quiz</h3>
+                <p>Answer questions to get personalized design suggestions</p>
+                <button>Take Quiz</button>
+            </div>
+
+            <div class="button-card">
+                <h3>🔍 Browse Examples</h3>
+                <p>Get inspired by AI-generated home designs</p>
+                <button>View Gallery</button>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>What You Can Do</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🤖 AI-Powered</h4>
+                    <p>Get smart design suggestions</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📱 Mobile Ready</h4>
+                    <p>Design on any device</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎯 3D Viewing</h4>
+                    <p>See your home in 3D</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quiz-section" id="quizSection" style="display: none;">
+            <div class="quiz-container">
+                <h2>🏠 Discover Your Design Style</h2>
+                <p class="quiz-intro">Answer a few questions to get personalized home design suggestions</p>
+
+                <div class="quiz-content">
+                    <div class="question active" id="question1">
+                        <h3>Question 1 of 4</h3>
+                        <p class="question-text">What's your preferred home style?</p>
+                        <div class="options">
+                            <button class="option-btn" data-answer="modern">Modern & Minimalist</button>
+                            <button class="option-btn" data-answer="traditional">Traditional & Cozy</button>
+                            <button class="option-btn" data-answer="industrial">Industrial & Urban</button>
+                            <button class="option-btn" data-answer="rustic">Rustic & Natural</button>
+                        </div>
+                    </div>
+
+                    <div class="question" id="question2">
+                        <h3>Question 2 of 4</h3>
+                        <p class="question-text">How many bedrooms do you need?</p>
+                        <div class="options">
+                            <button class="option-btn" data-answer="1-2">1-2 Bedrooms</button>
+                            <button class="option-btn" data-answer="3-4">3-4 Bedrooms</button>
+                            <button class="option-btn" data-answer="5+">5+ Bedrooms</button>
+                        </div>
+                    </div>
+
+                    <div class="question" id="question3">
+                        <h3>Question 3 of 4</h3>
+                        <p class="question-text">What's your priority?</p>
+                        <div class="options">
+                            <button class="option-btn" data-answer="space">Maximum Space</button>
+                            <button class="option-btn" data-answer="light">Natural Light</button>
+                            <button class="option-btn" data-answer="outdoor">Outdoor Living</button>
+                            <button class="option-btn" data-answer="tech">Smart Home Tech</button>
+                        </div>
+                    </div>
+
+                    <div class="question" id="question4">
+                        <h3>Question 4 of 4</h3>
+                        <p class="question-text">What's your preferred colour palette?</p>
+                        <div class="options">
+                            <button class="option-btn" data-answer="neutral">Neutral & Earthy (Beige, Grey, White)</button>
+                            <button class="option-btn" data-answer="bold">Bold & Vibrant (Blues, Greens, Reds)</button>
+                            <button class="option-btn" data-answer="dark">Dark & Moody (Black, Navy, Charcoal)</button>
+                            <button class="option-btn" data-answer="pastel">Soft & Pastel (Blush, Mint, Lavender)</button>
+                        </div>
+                    </div>
+
+                    <div class="quiz-result" id="quizResult">
+                        <h3>✨ Your Dream Home Profile</h3>
+                        <div class="result-content">
+                            <p id="resultText">Loading your personalized design...</p>
+                            <button id="restartQuiz">Take Quiz Again</button>
+                            <button id="startDesigning">Start Designing</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="close-quiz" id="closeQuiz"></button>
+            </div>
+        </section>
+    </main>
+
+    <section class="design-section" id="designCanvas">
+        <h2>🎨 Design Your Room</h2>
+        <p class="section-description">Click elements to customize your space</p>
+
+        <div class="design-controls">
+            <div class="control-group">
+                <label>Room Type:</label>
+                <select id="roomType">
+                    <option value="living">Living Room</option>
+                    <option value="bedroom">Bedroom</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="bathroom">Bathroom</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Wall Color:</label>
+                <input type="color" id="wallColor" value="#f5f5f5">
+            </div>
+
+            <div class="control-group">
+                <label>Floor Type:</label>
+                <select id="floorType">
+                    <option value="wood">Hardwood</option>
+                    <option value="tile">Tile</option>
+                    <option value="carpet">Carpet</option>
+                    <option value="concrete">Concrete</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Room Size: <span id="roomSizeValue">Medium</span></label>
+                <input type="range" id="roomSize" min="300" max="700" value="500" step="50">
+            </div>
+        </div>
+
+        <div class="color-palettes">
+            <h3>🎨 Quick Color Palettes</h3>
+            <div class="palette-container">
+                <button class="palette-btn" data-wall="#ffffff" data-floor="wood">
+                    <div class="palette-preview">
+                        <div style="background: #ffffff"></div>
+                        <div style="background: #d4a574"></div>
+                    </div>
+                    <span>Bright & Natural</span>
+                </button>
+
+                <button class="palette-btn" data-wall="#f0e6d2" data-floor="wood">
+                    <div class="palette-preview">
+                        <div style="background: #f0e6d2"></div>
+                        <div style="background: #d4a574"></div>
+                    </div>
+                    <span>Warm Beige</span>
+                </button>
+
+                <button class="palette-btn" data-wall="#e8f4f8" data-floor="tile">
+                    <div class="palette-preview">
+                        <div style="background: #e8f4f8"></div>
+                        <div style="background: #e8e8e8"></div>
+                    </div>
+                    <span>Cool Blue</span>
+                </button>
+
+                <button class="palette-btn" data-wall="#2c3e50" data-floor="concrete">
+                    <div class="palette-preview">
+                        <div style="background: #2c3e50"></div>
+                        <div style="background: #95a5a6"></div>
+                    </div>
+                    <span>Modern Dark</span>
+                </button>
+
+                <button class="palette-btn" data-wall="#ffeaa7" data-floor="wood">
+                    <div class="palette-preview">
+                        <div style="background: #ffeaa7"></div>
+                        <div style="background: #d4a574"></div>
+                    </div>
+                    <span>Sunny Yellow</span>
+                </button>
+
+                <button class="palette-btn" data-wall="#dfe6e9" data-floor="carpet">
+                    <div class="palette-preview">
+                        <div style="background: #dfe6e9"></div>
+                        <div style="background: #c9a88a"></div>
+                    </div>
+                    <span>Soft Gray</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <div class="room-canvas" id="roomCanvas">
+                <div class="wall back-wall" id="backWall">
+                    <div class="window"></div>
+                </div>
+                <div class="floor" id="floor"></div>
+                <div class="furniture" id="furniture">
+                    <!-- Living Room Furniture -->
+                    <div class="furniture-set living-room active">
+                        <div class="furniture-item" style="left: 30%; top: 60%;">🛋️ Sofa</div>
+                        <div class="furniture-item" style="left: 50%; top: 70%;">☕ Coffee Table</div>
+                        <div class="furniture-item" style="left: 70%; top: 65%;">📺 TV Stand</div>
+                    </div>
+
+                    <div class="furniture-set bedroom-room">
+                        <div class="furniture-item" style="left: 40%; top: 60%;">🛏️ Bed</div>
+                        <div class="furniture-item" style="left: 20%; top: 65%;">🪞 Dresser</div>
+                        <div class="furniture-item" style="left: 70%; top: 70%;">💡 Nightstand</div>
+                    </div>
+
+                    <div class="furniture-set kitchen-room">
+                        <div class="furniture-item" style="left: 25%; top: 65%;">🍳 Stove</div>
+                        <div class="furniture-item" style="left: 50%; top: 70%;">🧊 Refrigerator</div>
+                        <div class="furniture-item" style="left: 70%; top: 65%;">🪑 Dining Table</div>
+                    </div>
+
+                    <div class="furniture-set bathroom-room">
+                        <div class="furniture-item" style="left: 30%; top: 65%;">🚿 Shower</div>
+                        <div class="furniture-item" style="left: 55%; top: 70%;">🚽 Toilet</div>
+                        <div class="furniture-item" style="left: 75%; top: 65%;">🚰 Sink</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-info">
+                <p>💡 <strong>Tip:</strong> Change options above to see your room update in real-time!</p>
+                <button id="getAISuggestion">🤖 Get AI Design Suggestions</button>
+                <button id="saveDesign">💾 Save My Design</button>
+                <button id="downloadDesign">📸 Download as Image</button>
+                <button id="resetDesign">🔄 Reset Room</button>
+
+                <!-- AI Suggestions Display -->
+                <div id="aiSuggestionsBox" style="display: none;">
+                    <h4>🎨 AI Designer Says:</h4>
+                    <p id="aiSuggestionText"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="viewer-section" id="viewer3D">
+        <h2>🎮 3D Room Viewer</h2>
+        <p class="section-description">View your design in 3D - drag to rotate, scroll to zoom!</p>
+
+        <div class="viewer-controls">
+            <button id="view3DBtn">🏠 View in 3D</button>
+            <button id="close3DBtn" style="display: none;">x Close 3D View</button>
+
+            <div class="lighting-control" id="lightingControl" style="display: none;">
+                <label>💡 Lighting:</label>
+                <button id="dayLightBtn" class="active">☀️ Day</button>
+                <button id="nightLightBtn">🌙 Night</button>
+                <button id="sunsetLightBtn">🌅 Sunset</button>
+            </div>
+
+            <div class="camera-control" id="cameraControl" style="display: none;">
+                <label>📷 View:</label>
+                <button id="frontViewBtn" class="active">Front</button>
+                <button id="topViewBtn">Top Down</button>
+                <button id="cornerViewBtn">Corner</button>
+                <button id="walkViewBtn">Walk-Through</button>
+            </div>
+
+            <div class="view-info">
+                <span>🖱️👆 Drag to rotate</span>
+                <span>🔍🤏 Scroll/Pinch to zoom</span>
+            </div>
+        </div>
+
+        <div id="threejs-container" style="display: none;">
+
+        </div>
+    </section>
+
+    <footer>
+        <p>Built with ❤️ | Week 3 of my coding journey - Now with JavaScript!</p>
+    </footer>
+
+    <!-- Three.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        canvas {
+            border: 2px solid #333;
+            margin: 10px 0;
+            background: white;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏠 Generate App Icons</h1>
+    <p>Click the buttons below each canvas to download the icons.</p>
+    
+    <h3>Icon 192x192</h3>
+    <canvas id="icon192" width="192" height="192"></canvas><br>
+    <button onclick="downloadIcon('icon192', 'icon-192.png')">Download icon-192.png</button>
+    
+    <h3>Icon 512x512</h3>
+    <canvas id="icon512" width="512" height="512"></canvas><br>
+    <button onclick="downloadIcon('icon512', 'icon-512.png')">Download icon-512.png</button>
+
+    <script>
+        function createIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Purple gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // White rounded rectangle for house shape
+            ctx.fillStyle = 'white';
+            const padding = size * 0.2;
+            const width = size - (padding * 2);
+            const height = size - (padding * 2);
+            
+            ctx.beginPath();
+            ctx.roundRect(padding, padding, width, height, size * 0.1);
+            ctx.fill();
+            
+            // Purple "H" letter
+            ctx.fillStyle = '#667eea';
+            ctx.font = `bold ${size * 0.5}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('H', size / 2, size / 2);
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const url = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            link.click();
+        }
+        
+        // Generate both icons on load
+        createIcon('icon192', 192);
+        createIcon('icon512', 512);
+    </script>
+</body>
+</html>
