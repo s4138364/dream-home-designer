@@ -1838,4 +1838,8 @@ function announceToScreenReader(message) {
 }
 
 // Apply initial design on load
-applyDesign();
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof applyDesign === 'function') {
+        applyDesign();
+    }
+});
