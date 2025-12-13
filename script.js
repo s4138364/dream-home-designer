@@ -1747,7 +1747,7 @@ window.addEventListener('load', () => {
             loadingScreen.classList.add('hidden');
             console.log('✨ App fully loaded!');
         }
-    }, 500); // 500ms delay for smooth experience
+    }, 3000); // 3000ms delay for smooth experience (was originally 500)
 });
 
 // Also hide if taking too long (fallback)
