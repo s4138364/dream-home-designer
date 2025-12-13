@@ -8,6 +8,44 @@ let quizAnswers = {
 
 let currentQuestion = 1;
 
+// ===== TOAST NOTIFICATION SYSTEM =====
+
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    // Choose icon based on type
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || icons.info}</div>
+        <div class="toast-message">${message}</div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    // Add to container
+    container.appendChild(toast);
+    
+    // Auto-remove after duration
+    setTimeout(() => {
+        toast.classList.add('hiding');
+        setTimeout(() => {
+            toast.remove();
+        }, 300); // Match animation duration
+    }, duration);
+    
+    console.log(`📢 Toast: [${type}] ${message}`);
+}
+
 // ===== SMART AI SIMULATION ENGINE =====
 // This simulates AI responses without API costs
 
@@ -360,7 +398,7 @@ function resetQuiz() {
 
 // Start designing button (placeholder for now)
 startDesigningBtn.addEventListener('click', function() {
-    alert('Design interface coming in Week 4! 🎨');
+    showToast('Scrolling to design canvas...', 'info');
     quizSection.style.display = 'none';
 });
 
@@ -610,7 +648,7 @@ paletteButtons.forEach(button => {
 // Save design
 saveDesignBtn.addEventListener('click', function() {
     localStorage.setItem('dreamHomeDesign', JSON.stringify(currentDesign));
-    alert('✅ Your design has been saved! It will be here when you return.');
+    showToast('Design saved successfully!', 'success');
     console.log('Design saved:', currentDesign);
 });
 
@@ -625,7 +663,7 @@ resetDesignBtn.addEventListener('click', function() {
         };
         applyDesign();
         localStorage.removeItem('dreamHomeDesign');
-        alert('🔄 Design reset to default!');
+        showToast('Design reset to default', 'info');
     }
 });
 
@@ -839,7 +877,7 @@ if (getAISuggestionBtn) {
     getAISuggestionBtn.addEventListener('click', async function() {
         // Check if user has completed quiz
         if (!quizAnswers.style || !quizAnswers.bedrooms) {
-            alert('Please complete the quiz first to get personalized suggestions!');
+            showToast('Please complete the quiz first!', 'warning');
             quizSection.style.display = 'flex';
             resetQuiz();
             return;
