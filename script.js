@@ -333,6 +333,8 @@ async function showResults() {
     resultTextElement.textContent = smartSuggestion;
     
     console.log('Smart AI generated:', smartSuggestion);
+
+    announceToScreenReader('Quiz completed. Your personalized design suggestions are ready.')
 }
 
 // Generate personalized message based on answers
@@ -566,6 +568,8 @@ roomTypeSelect.addEventListener('change', function() {
         console.log('🔄 3D room updated to:', this.value);
     }
     
+    announceToScreenReader(`Room changed to ${this.value}`);
+
     console.log('Room type changed to:', this.value);
 });
 
@@ -649,6 +653,9 @@ paletteButtons.forEach(button => {
 saveDesignBtn.addEventListener('click', function() {
     localStorage.setItem('dreamHomeDesign', JSON.stringify(currentDesign));
     showToast('Design saved successfully!', 'success');
+
+    announceToScreenReader('Design saved successfully.')
+
     console.log('Design saved:', currentDesign);
 });
 
@@ -1209,43 +1216,61 @@ function add3DKeyboardControls() {
     
     // Make canvas focusable
     canvas.setAttribute('tabindex', '0');
-    canvas.setAttribute('aria-label', '3D room viewer - use arrow keys to rotate, plus/minus to zoom');
+    canvas.setAttribute('aria-label', '3D room viewer - use arrow keys to rotate, plus and minus keys to zoom, Home key to reset view');
+    
+    // Show focus indicator
+    canvas.addEventListener('focus', () => {
+        canvas.style.cursor = 'crosshair';
+        console.log('🎹 Keyboard controls active - use arrow keys');
+    });
+    
+    canvas.addEventListener('blur', () => {
+        canvas.style.cursor = 'grab';
+    });
     
     canvas.addEventListener('keydown', (e) => {
-        const step = 5; // Movement step
+        const step = 10; // Increased step for more noticeable movement
         
         switch(e.key) {
             case 'ArrowLeft':
                 e.preventDefault();
                 rotateCamera(-step, 0);
+                console.log('⬅️ Rotate left');
                 break;
             case 'ArrowRight':
                 e.preventDefault();
                 rotateCamera(step, 0);
+                console.log('➡️ Rotate right');
                 break;
             case 'ArrowUp':
                 e.preventDefault();
                 rotateCamera(0, -step);
+                console.log('⬆️ Rotate up');
                 break;
             case 'ArrowDown':
                 e.preventDefault();
                 rotateCamera(0, step);
+                console.log('⬇️ Rotate down');
                 break;
             case '+':
             case '=':
                 e.preventDefault();
                 zoomCamera(-1);
+                console.log('🔍 Zoom in');
                 break;
             case '-':
             case '_':
                 e.preventDefault();
                 zoomCamera(1);
+                console.log('🔍 Zoom out');
                 break;
             case 'Home':
                 e.preventDefault();
                 // Reset to front view
                 camera.position.set(0, 8, 15);
                 camera.lookAt(0, 2, 0);
+                announceToScreenReader('View reset to front');
+                console.log('🏠 Reset to front view');
                 break;
         }
     });
@@ -1580,9 +1605,19 @@ view3DBtn.addEventListener('click', function() {
     
     isViewer3DActive = true;
     animate3D();
+
+    // AUTO-FOCUS THE CANVAS FOR KEYBOARD CONTROL
+    setTimeout(() => {
+        if (renderer && renderer.domElement) {
+            renderer.domElement.focus();
+            console.log('🎹 Canvas focused - keyboard controls ready');
+        }
+    }, 100);
     
     // Scroll to viewer
     threejsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    announceToScreenReader('3D viewer opened. Use arrow keys to rotate view, plus and minus keys to zoom.')
     
     console.log('🎮 3D Viewer opened!');
 });
@@ -1839,7 +1874,7 @@ window.addEventListener('load', () => {
             loadingScreen.classList.add('hidden');
             console.log('✨ App fully loaded!');
         }
-    }, 3000); // 3000ms delay for smooth experience (was originally 500)
+    }, 1000); // 1000ms delay for smooth experience (was originally 500)
 });
 
 // Also hide if taking too long (fallback)
