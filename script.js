@@ -188,7 +188,6 @@ Key features include ${furniture} and ${tip}, which ${priorityInfo.benefits}. Yo
 
 ${closing}`;
 
-    // ADD THIS CONDITIONAL LOGIC HERE (before return)
     let finalSuggestion = suggestion;
     
     if (preferences.bedrooms === '5+') {
@@ -199,7 +198,7 @@ ${closing}`;
         finalSuggestion += "\n\nDon't forget to plan for plenty of power outlets and network ports!";
     }
     
-    return finalSuggestion;  // CHANGE: return finalSuggestion instead of suggestion
+    return finalSuggestion;
 }
 
 // Function: Generate room-specific suggestions
@@ -282,14 +281,14 @@ optionButtons.forEach(button => {
         } else if (currentQuestion === 3) {
             quizAnswers.priority = answer;
         } else if (currentQuestion === 4) {
-            quizAnswers.colors = answer;  // ADD THIS
+            quizAnswers.colors = answer;
         }
         
         console.log('Current quiz answers;', quizAnswers);
         console.log('Just answerd question', currentQuestion, 'with:', answer);
         
         // Move to next question or show results
-        if (currentQuestion < 4) {  // CHANGE 3 TO 4
+        if (currentQuestion < 4) {
             goToNextQuestion();
         } else {
             showResults();
@@ -359,7 +358,6 @@ function generateResultMessage() {
         tech: "integrating cutting-edge smart home technology throughout"
     };
     
-    // ADD THIS NEW SECTION
     const colorText = {
         neutral: "featuring a calming neutral and earthy color palette",
         bold: "accented with bold and vibrant colors that energize the space",
@@ -370,9 +368,8 @@ function generateResultMessage() {
     const style = styleDescriptions[quizAnswers.style] || "beautiful";
     const bedrooms = bedroomText[quizAnswers.bedrooms] || "multiple bedrooms";
     const priority = priorityText[quizAnswers.priority] || "your priorities";
-    const colors = colorText[quizAnswers.colors] || "your chosen colors";  // ADD THIS
+    const colors = colorText[quizAnswers.colors] || "your chosen colors";
     
-    // UPDATE THE RETURN STATEMENT
     return `✨ Perfect Match Found! ✨\n\nWe recommend a ${style} home with ${bedrooms}, while ${priority}, all ${colors}. This personalized design will transform your vision into reality and create the dream home you've always wanted!`;
 }
 
@@ -384,7 +381,7 @@ restartQuizBtn.addEventListener('click', function() {
 // Reset quiz to beginning
 function resetQuiz() {
     currentQuestion = 1;
-    quizAnswers = { style: '', bedrooms: '', priority: '', colors: '' };  // ADD colors
+    quizAnswers = { style: '', bedrooms: '', priority: '', colors: '' };
     
     // Hide result
     document.getElementById('quizResult').classList.remove('active');
@@ -411,171 +408,103 @@ console.log('Click "Take Quiz" to test the interactive quiz system');
 // Show welcome back message if user has completed quiz
 if (hasCompletedQuiz) {
     const returningUserSection = document.getElementById('returningUser');
-    const summaryDiv = document.getElementById('savedProfileSummary');
-    
-    // Generate summary
-    const summary = `
-        <strong>Your Design Style:</strong> ${quizAnswers.style || 'Not set'}<br>
-        <strong>Bedrooms:</strong> ${quizAnswers.bedrooms || 'Not set'}<br>
-        <strong>Priority:</strong> ${quizAnswers.priority || 'Not set'}<br>
-        <strong>Color Palette:</strong> ${quizAnswers.colors || 'Not set'}
-    `;
-    
-    summaryDiv.innerHTML = summary;
-    returningUserSection.style.display = 'block';
+    if (returningUserSection) {
+        returningUserSection.style.display = 'block';
+        document.getElementById('returningUserStyle').textContent = quizAnswers.style || 'modern';
+    }
 }
 
-// Retake quiz button
-const retakeQuizBtn = document.getElementById('retakeQuiz');
-if (retakeQuizBtn) {
-    retakeQuizBtn.addEventListener('click', function() {
-        // Clear saved data
-        localStorage.removeItem('dreamHomeQuiz');
-        quizAnswers = { style: '', bedrooms: '', priority: '', colors: '' };
-        
-        // Hide returning user section
-        document.getElementById('returningUser').style.display = 'none';
-        
-        // Show quiz
-        quizSection.style.display = 'flex';
-        resetQuiz();
-    });
-}
+// ===== ROOM DESIGN CANVAS =====
 
-// Continue designing button
-const continueDesigningBtn = document.getElementById('continueDesigning');
-if (continueDesigningBtn) {
-    continueDesigningBtn.addEventListener('click', function() {
-        // Scroll to design section (we'll build this next!)
-        document.getElementById('designCanvas').scrollIntoView({ behavior: 'smooth' });
-    });
-}
-
-// ===== DESIGN CANVAS FUNCTIONALITY =====
-
-// Get design elements
-const roomTypeSelect = document.getElementById('roomType');
-const wallColorInput = document.getElementById('wallColor');
-const floorTypeSelect = document.getElementById('floorType');
-const backWall = document.getElementById('backWall');
-const floor = document.getElementById('floor');
-const saveDesignBtn = document.getElementById('saveDesign');
-const resetDesignBtn = document.getElementById('resetDesign');
-
-// Current design state
+// Store current design state
 let currentDesign = {
     roomType: 'living',
     wallColor: '#f5f5f5',
     floorType: 'wood',
-    roomSize: 500  // ADD THIS
+    roomSize: 500
 };
 
 // Load saved design if exists
-function loadSavedDesign() {
-    const saved = localStorage.getItem('dreamHomeDesign');
-    if (saved) {
-        currentDesign = JSON.parse(saved);
-        applyDesign();
-        console.log('Loaded saved design:', currentDesign);
-    }
+const savedDesign = localStorage.getItem('dreamHomeDesign');
+if (savedDesign) {
+    currentDesign = JSON.parse(savedDesign);
 }
+
+// Get all control elements
+const roomTypeButtons = document.querySelectorAll('.room-btn');
+const wallColorInput = document.getElementById('wallColor');
+const floorTypeSelect = document.getElementById('floorType');
+const saveDesignBtn = document.getElementById('saveDesign');
+const resetDesignBtn = document.getElementById('resetDesign');
 
 // Apply design to canvas
 function applyDesign() {
-    // Update controls to match
-    roomTypeSelect.value = currentDesign.roomType;
-    wallColorInput.value = currentDesign.wallColor;
-    floorTypeSelect.value = currentDesign.floorType;
-
-    if (currentDesign.roomSize) {
-        roomSizeSlider.value = currentDesign.roomSize;
-        roomCanvas.style.height = currentDesign.roomSize + 'px';
-        
-        // Update label
-        if (currentDesign.roomSize <= 400) {
-            roomSizeLabel.textContent = 'Small';
-        } else if (currentDesign.roomSize <= 550) {
-            roomSizeLabel.textContent = 'Medium';
-        } else {
-            roomSizeLabel.textContent = 'Large';
-        }
-    }
+    const canvas = document.getElementById('roomCanvas');
     
-    // Apply wall color
-    backWall.style.background = currentDesign.wallColor;
-    
-    // Apply floor type
-    const floorStyles = {
-        wood: {
-            background: '#d4a574',
-            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(0,0,0,0.1) 100px, rgba(0,0,0,0.1) 102px)'
-        },
-        tile: {
-            background: '#e8e8e8',
-            backgroundImage: 'repeating-linear-gradient(0deg, #ddd, #ddd 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, #ddd, #ddd 1px, transparent 1px, transparent 50px)'
-        },
-        carpet: {
-            background: '#c9a88a',
-            backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px)'
-        },
-        concrete: {
-            background: '#95a5a6',
-            backgroundImage: 'none'
-        }
-    };
-    
-    const floorStyle = floorStyles[currentDesign.floorType];
-    floor.style.background = floorStyle.background;
-    floor.style.backgroundImage = floorStyle.backgroundImage;
-
-    // Show correct furniture set for room type
+    // Update room type display (show/hide furniture sets)
     document.querySelectorAll('.furniture-set').forEach(set => {
         set.classList.remove('active');
     });
-    
-    const selectedSet = document.querySelector(`.furniture-set.${currentDesign.roomType}-room`);
-    if (selectedSet) {
-        selectedSet.classList.add('active');
+    const activeSet = document.getElementById(currentDesign.roomType + 'Furniture');
+    if (activeSet) {
+        activeSet.classList.add('active');
     }
     
-    // Enable dragging and load positions
+    // Apply colors
+    canvas.style.backgroundColor = currentDesign.wallColor;
+    
+    // Apply floor pattern based on type
+    const floorOverlay = document.querySelector('.floor-overlay');
+    if (floorOverlay) {
+        floorOverlay.style.display = 'block';
+        
+        switch(currentDesign.floorType) {
+            case 'wood':
+                floorOverlay.style.background = 'repeating-linear-gradient(90deg, #d4a574 0px, #d4a574 100px, #c9965c 100px, #c9965c 200px)';
+                break;
+            case 'tile':
+                floorOverlay.style.background = 'repeating-conic-gradient(#e8e8e8 0% 25%, #f5f5f5 0% 50%) 50% / 40px 40px';
+                break;
+            case 'carpet':
+                floorOverlay.style.background = '#c9a88a';
+                floorOverlay.style.opacity = '0.9';
+                break;
+            case 'concrete':
+                floorOverlay.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
+                break;
+        }
+    }
+    
+    // Enable furniture dragging again (in case elements were recreated)
     enableFurnitureDragging();
     loadFurniturePositions();
+    
+    console.log('Design applied:', currentDesign);
 }
 
-// Event listeners for design changes
-// Room type change - switch furniture
-roomTypeSelect.addEventListener('change', function() {
-    currentDesign.roomType = this.value;
-    
-    // Hide all furniture sets
-    document.querySelectorAll('.furniture-set').forEach(set => {
-        set.classList.remove('active');
-    });
-    
-    // Show furniture for selected room type
-    const selectedSet = document.querySelector(`.furniture-set.${this.value}-room`);
-    if (selectedSet) {
-        selectedSet.classList.add('active');
-    }
-    
-    // Re-enable dragging for new furniture items
-    enableFurnitureDragging();
-    
-    // UPDATE 3D VIEW IF IT'S OPEN
-    if (isViewer3DActive) {
-        create3DRoom();
-        console.log('🔄 3D room updated to:', this.value);
-    }
-    
-    announceToScreenReader(`Room changed to ${this.value}`);
+// Room type selection
+roomTypeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        currentDesign.roomType = this.getAttribute('data-room');
+        
+        // Visual feedback
+        roomTypeButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        applyDesign();
 
-    console.log('Room type changed to:', this.value);
+        // UPDATE 3D VIEW IF IT'S OPEN
+        if (isViewer3DActive) {
+            create3DRoom();
+            console.log('🎨 3D room type updated to:', currentDesign.roomType);
+        }
+    });
 });
 
+// Wall color change
 wallColorInput.addEventListener('input', function() {
     currentDesign.wallColor = this.value;
-    backWall.style.background = this.value;
+    applyDesign();
 
     if (isViewer3DActive) {
         create3DRoom();
@@ -666,7 +595,7 @@ resetDesignBtn.addEventListener('click', function() {
             roomType: 'living',
             wallColor: '#f5f5f5',
             floorType: 'wood',
-            roomSize: 500  // ADD THIS
+            roomSize: 500
         };
         applyDesign();
         localStorage.removeItem('dreamHomeDesign');
@@ -933,6 +862,11 @@ let scene, camera, renderer, controls;
 let room3D = null;
 let isViewer3DActive = false;
 
+// Room dimensions (FIX: Define these constants!)
+const ROOM_WIDTH = 10;
+const ROOM_LENGTH = 10;
+const ROOM_HEIGHT = 5;
+
 // Initialize Three.js scene
 function init3DScene() {
     const container = document.getElementById('threejs-container');
@@ -941,19 +875,20 @@ function init3DScene() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); // Sky blue
 
-    // Create camera
+    // Create camera - CENTERED POSITION
     camera = new THREE.PerspectiveCamera( 
-        50,                                             // Field of view
-        containerWidth / containerHeight,
-        0.1,                                            // Near clipping
-        1000                                            // Far clipping
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
     );
 
-    camera.position.set(0, 8, 12);  // Further back and higher
-    camera.lookAt(0, 2, 0);         // Look at room center
+    // CRITICAL: Position camera at X=0 for perfect centering
+    camera.position.set(0, 6, 10);
+    camera.lookAt(0, 0, 0);
 
-    // Creat renderer
-    const renderer = new THREE.WebGLRenderer({
+    // Create renderer
+    renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true 
     });
@@ -967,25 +902,17 @@ function init3DScene() {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 20, 10);
-    directionalLight.castShadow = true;
-    scene.add(directionalLight);
-
     // Add lights (Initialize with Day mode)
     setLightingMode('day');
 
     // Add basic mouse controls (orbit)
     addOrbitControls();
 
-    // Add keyboard controls for accessbility
+    // Add keyboard controls for accessibility
     add3DKeyboardControls();
 
     console.log('✨ 3D Scene initialized!');
+    console.log('📷 Camera position:', camera.position);
 }
 
 // Store light references
@@ -1059,8 +986,8 @@ function setCameraView(viewType) {
     let targetLookAt = { x: 0, y: 2, z: 0 }; // Look at center of room
     
     if (viewType === 'front') {
-        // Front view - standing in front of room
-        targetPosition = { x: 0, y: 8, z: 16 };  // Increased z from 15 to 16
+        // Front view - CENTERED
+        targetPosition = { x: 0, y: 8, z: 16 };
         targetLookAt = { x: 0, y: 2, z: 0 };
         
     } else if (viewType === 'top') {
@@ -1071,7 +998,7 @@ function setCameraView(viewType) {
     } else if (viewType === 'corner') {
         // Corner view (isometric style)
         targetPosition = { x: 12, y: 10, z: 12 };
-        targetLookAt = { x: 0, y: 2, z: 0 }
+        targetLookAt = { x: 0, y: 2, z: 0 };
         
     } else if (viewType === 'walk') {
         // Walk-through view (eye level)
@@ -1181,7 +1108,7 @@ function addOrbitControls() {
                 y: e.touches[0].clientY
             };
         } else if (e.touches.length === 2) {
-            // Two finger pinch - zoom (IMPROVED)
+            // Two finger pinch - zoom
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -1191,7 +1118,6 @@ function addOrbitControls() {
                 
                 // Only zoom if pinch movement is significant (reduces jitter)
                 if (Math.abs(delta) > 2) {
-                    // Reduced sensitivity: 0.01 → 0.003
                     zoomCamera(-delta * 0.003);
                 }
             }
@@ -1290,7 +1216,7 @@ function add3DKeyboardControls() {
 
 // Helper function to rotate camera (IMPROVED - no drift)
 function rotateCamera(deltaX, deltaY) {
-    const rotationSpeed = 0.003;
+    const rotationSpeed = 0.005; // Slightly increased for better responsiveness
     
     // Calculate current spherical coordinates
     const radius = Math.sqrt(
@@ -1405,18 +1331,13 @@ function animateZoom() {
 function create3DRoom() {
     // Clear previous room if exists
     if (room3D) {
-        while(room3D.children.length > 0) {
-        const object = room3D.children[0];
-        room3D.remove(object);
-        if (object.geometry) object.geometry.dispose();
-        if (object.material) object.material.dispose();
-        }
-
         scene.remove(room3D);
     }
     
-    const room3D = new THREE.Group();
-    room3D.position.set(0, 0, 0); // ENSURE ROOM IS AT CENTER
+    room3D = new THREE.Group();
+
+    // CRITICAL: Position room at origin (0,0,0)
+    room3D.position.set(0, 0, 0);
     
     // Get wall color from current design
     const wallColor = new THREE.Color(currentDesign.wallColor || '#f5f5f5');
@@ -1430,14 +1351,16 @@ function create3DRoom() {
     };
     const floorColor = floorColors[currentDesign.floorType] || 0xd4a574;
     
-    // Create floor
-    const floorGeometry = new THREE.PlaneGeometry(10, 10);
+    // Create floor - CENTERED using room constants
+    const floorGeometry = new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_LENGTH);
     const floorMaterial = new THREE.MeshStandardMaterial({ 
         color: floorColor,
-        roughness: 0.8
+        roughness: 0.8,
+        side: THREE.DoubleSide
     });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2; // Rotate to be horizontal
+    floor.position.set(0, 0, 0);  // FORCE CENTER
     floor.receiveShadow = true;
     room3D.add(floor);
     
@@ -1447,22 +1370,22 @@ function create3DRoom() {
         side: THREE.DoubleSide
     });
     
-    // Back wall
-    const backWallGeometry = new THREE.PlaneGeometry(10, 5);
+    // Back wall - CENTERED
+    const backWallGeometry = new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_HEIGHT);
     const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
-    backWall.position.set(0, 2.5, -5);
+    backWall.position.set(0, ROOM_HEIGHT / 2, -ROOM_LENGTH / 2);
     room3D.add(backWall);
     
-    // Left wall
-    const leftWallGeometry = new THREE.PlaneGeometry(10, 5);
+    // Left wall - CENTERED
+    const leftWallGeometry = new THREE.PlaneGeometry(ROOM_LENGTH, ROOM_HEIGHT);
     const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
-    leftWall.position.set(-5, 2.5, 0);
+    leftWall.position.set(-ROOM_WIDTH / 2, ROOM_HEIGHT / 2, 0);
     leftWall.rotation.y = Math.PI / 2;
     room3D.add(leftWall);
     
-    // Right wall
+    // Right wall - CENTERED
     const rightWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
-    rightWall.position.set(5, 2.5, 0);
+    rightWall.position.set(ROOM_WIDTH / 2, ROOM_HEIGHT / 2, 0);
     rightWall.rotation.y = -Math.PI / 2;
     room3D.add(rightWall);
     
@@ -1487,6 +1410,15 @@ function create3DRoom() {
     camera.lookAt(0, 2, 0);         // Look at center of room
 
     scene.add(room3D);
+    
+    console.log('=== POSITION DEBUG ===');
+    console.log('Camera X:', camera.position.x, '(should be 0) ✓');
+    console.log('Camera Y:', camera.position.y);
+    console.log('Camera Z:', camera.position.z);
+    console.log('Room X:', room3D.position.x, '(should be 0) ✓');
+    console.log('Room Y:', room3D.position.y, '(should be 0) ✓');
+    console.log('Room Z:', room3D.position.z, '(should be 0) ✓');
+    console.log('======================');
     console.log('🏠 3D Room created!');
 }
 
@@ -1772,9 +1704,13 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 // Function to show install button
 function showInstallButton() {
-    const installBtn = document.getElementById('installAppBtn');
-    if (installBtn) {
-        installBtn.style.display = 'inline-block';
+    const dismissed = localStorage.getItem('installPromptDismissed');
+    
+    if (!dismissed) {
+        const installPrompt = document.getElementById('installPrompt');
+        if (installPrompt) {
+            installPrompt.style.display = 'block';
+        }
     }
 }
 
@@ -1852,7 +1788,7 @@ function dismissUpdate() {
     console.log('⏭️ Update dismissed - will remind later');
 }
 
-// ===== CHECK FOR UPDATES WHEN APP BECOMES VISIBLE (ADD THIS) =====
+// ===== CHECK FOR UPDATES WHEN APP BECOMES VISIBLE =====
 
 // Also check for updates when page becomes visible
 document.addEventListener('visibilitychange', () => {
@@ -1864,18 +1800,6 @@ document.addEventListener('visibilitychange', () => {
 });
 
 console.log('📱 PWA features initialized with update detection!');
-
-// Update showInstallButton to check if user dismissed
-function showInstallButton() {
-    const dismissed = localStorage.getItem('installPromptDismissed');
-    
-    if (!dismissed) {
-        const installPrompt = document.getElementById('installPrompt');
-        if (installPrompt) {
-            installPrompt.style.display = 'block';
-        }
-    }
-}
 
 // ===== LOADING SCREEN =====
 
@@ -1889,7 +1813,7 @@ window.addEventListener('load', () => {
             loadingScreen.classList.add('hidden');
             console.log('✨ App fully loaded!');
         }
-    }, 1000); // 1000ms delay for smooth experience (was originally 500)
+    }, 1000);
 });
 
 // Also hide if taking too long (fallback)
@@ -1912,3 +1836,6 @@ function announceToScreenReader(message) {
         }, 1000);
     }
 }
+
+// Apply initial design on load
+applyDesign();
