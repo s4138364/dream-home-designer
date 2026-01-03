@@ -4,6 +4,8 @@
     <title>AI Integrated Dream Home Designer</title>
     <link rel="stylesheet" href="style.css">
 
+    <link rel="stylesheet" href="scroll-animations.css">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     
@@ -66,12 +68,12 @@
             </div>
         </div>
         
-        <section class="welcome-section">
+        <section class="welcome-section scroll-fade-up">
             <h2>Welcome!</h2>
             <p>Let's create your dream home together. Choose how you want to start:</p>
         </section>
 
-        <section class="returning-user" id="returningUser" style="display: none;">
+        <section class="returning-user scroll-fade-up" id="returningUser" style="display: none;">
             <div class="saved-profile">
                 <h3>👋 Welcome Back!</h3>
                 <p>We saved your design preferences from last time.</p>
@@ -82,7 +84,7 @@
         </section>
 
         <section class="action-buttons">
-            <div class="button-card">
+            <div class="button-card scroll-scale-in scroll-delay-1">
                 <h3>🎨 Start Designing</h3>
                 <p>Jump right in and create your home from scratch</p>
                 <button>Start Now</button>
@@ -101,18 +103,18 @@
             </div>
         </section>
 
-        <section class="features">
+        <section class="features scroll-fade-up">
             <h2>What You Can Do</h2>
             <div class="feature-list">
-                <div class="feature-item">
+                <div class="feature-item scroll-scale-in">
                     <h4>🤖 AI-Powered</h4>
                     <p>Get smart design suggestions</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item scroll-scale-in">
                     <h4>📱 Mobile Ready</h4>
                     <p>Design on any device</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item scroll-scale-in">
                     <h4>🎯 3D Viewing</h4>
                     <p>See your home in 3D</p>
                 </div>
@@ -183,7 +185,7 @@
         </section>
     </main>
 
-    <section class="design-section" id="designCanvas">
+    <section class="design-section scroll-fade-up" id="designCanvas">
         <h2>🎨 Design Your Room</h2>
         <p class="section-description">Click elements to customize your space</p>
 
@@ -219,10 +221,10 @@
             </div>
         </div>
 
-        <div class="color-palettes">
+        <div class="color-palettes scroll-fade-up">
             <h3>🎨 Quick Color Palettes</h3>
             <div class="palette-container">
-                <button class="palette-btn" data-wall="#ffffff" data-floor="wood">
+                <button class="palette-btn scroll-scale-in" data-wall="#ffffff" data-floor="wood">
                     <div class="palette-preview">
                         <div style="background: #ffffff"></div>
                         <div style="background: #d4a574"></div>
@@ -230,7 +232,7 @@
                     <span>Bright & Natural</span>
                 </button>
 
-                <button class="palette-btn" data-wall="#f0e6d2" data-floor="wood">
+                <button class="palette-btn scroll-scale-in" data-wall="#f0e6d2" data-floor="wood">
                     <div class="palette-preview">
                         <div style="background: #f0e6d2"></div>
                         <div style="background: #d4a574"></div>
@@ -238,7 +240,7 @@
                     <span>Warm Beige</span>
                 </button>
 
-                <button class="palette-btn" data-wall="#e8f4f8" data-floor="tile">
+                <button class="palette-btn scroll-scale-in" data-wall="#e8f4f8" data-floor="tile">
                     <div class="palette-preview">
                         <div style="background: #e8f4f8"></div>
                         <div style="background: #e8e8e8"></div>
@@ -246,7 +248,7 @@
                     <span>Cool Blue</span>
                 </button>
 
-                <button class="palette-btn" data-wall="#2c3e50" data-floor="concrete">
+                <button class="palette-btn scroll-scale-in" data-wall="#2c3e50" data-floor="concrete">
                     <div class="palette-preview">
                         <div style="background: #2c3e50"></div>
                         <div style="background: #95a5a6"></div>
@@ -254,7 +256,7 @@
                     <span>Modern Dark</span>
                 </button>
 
-                <button class="palette-btn" data-wall="#ffeaa7" data-floor="wood">
+                <button class="palette-btn scroll-scale-in" data-wall="#ffeaa7" data-floor="wood">
                     <div class="palette-preview">
                         <div style="background: #ffeaa7"></div>
                         <div style="background: #d4a574"></div>
@@ -262,7 +264,7 @@
                     <span>Sunny Yellow</span>
                 </button>
 
-                <button class="palette-btn" data-wall="#dfe6e9" data-floor="carpet">
+                <button class="palette-btn scroll-scale-in" data-wall="#dfe6e9" data-floor="carpet">
                     <div class="palette-preview">
                         <div style="background: #dfe6e9"></div>
                         <div style="background: #c9a88a"></div>
@@ -322,7 +324,7 @@
         </div>
     </section>
 
-    <section class="viewer-section" id="viewer3D">
+    <section class="viewer-section scroll-fade-up" id="viewer3D">
         <h2>🎮 3D Room Viewer</h2>
         <p class="section-description">View your design in 3D - drag to rotate, scroll to zoom!</p>
 
